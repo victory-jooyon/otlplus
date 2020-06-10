@@ -19,10 +19,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN git clone https://github.com/victory-jooyon/otlplus.git /otlplus/www
 WORKDIR /otlplus/www
-RUN git checkout feature/logging
+RUN git checkout feature/logging-past
 
 RUN aws s3 cp s3://otlplus/keys keys --recursive
-# RUN aws s3 cp s3://otlplus/db.sqlite3 db.sqlite3
+RUN aws s3 cp s3://otlplus/db.sqlite3 db.sqlite3
 RUN cat keys/sso >> otlplus/settings.py
 RUN /otlplus/venv/bin/pip install -r requirements.txt
 
