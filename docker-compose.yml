@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  otlplus:
+    container_name: otlplus
+    build: ./
+    tty: false
+    ports:
+      - "7000:7000"
