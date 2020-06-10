@@ -3,7 +3,7 @@ version: '3'
 services:
   otlplus:
     container_name: otlplus
-    build: ./
+    image: shavakan/cs453-otlplus:latest
     tty: false
     ports:
       - "7000:7000"
