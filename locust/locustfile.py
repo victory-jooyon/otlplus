@@ -46,7 +46,7 @@ class Subject(HttpUser):
             "end": "",
             "keyword": "테스팅",
         }
-        self.client.get("/api/lectures")
+        self.client.get("/api/lectures", params=params)
 
     @task
     def getLecturesAutocomplete(self):
@@ -55,9 +55,9 @@ class Subject(HttpUser):
             "semester": "1",
             "keyword": "cs"
         }
-        self.client.get("/api/lectures/automcomplete")
+        self.client.get("/api/lectures/automcomplete", params=params)
     
     @task
     def getTakenCourses(self):
         user_id = "1"
-        self.client.get("/api/users/{user_id}/taken-courses")
+        self.client.get(f"/api/users/{user_id}/taken-courses")
