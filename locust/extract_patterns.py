@@ -17,12 +17,13 @@ class API(object):
 class APIManager(object):
     api_map = {}
     idx_map = {}
+    count = 0
 
-    def register(self, idx, method, uri):
-        if idx in self.idx_map: return
-        if (method, uri) in self.api_map: return 
-        api = API(idx, method, uri)
-        self.idx_map[idx] = api
+    def register(self, method, uri):
+        if (method, uri) in self.api_map: return
+        self.count += 1
+        api = API(self.count, method, uri)
+        self.idx_map[self.count] = api
         self.api_map[(method, uri)] = api
     
     def find_by_idx(self, idx):
@@ -37,46 +38,46 @@ class APIManager(object):
         return API(None, method, uri)
 
 APIS = [
-    (1, 'GET', '^/main/$'),
-    (2, 'GET', '^/session/$'),
-    (3, 'GET', '^/session/login/$'),
-    (4, 'GET', '^/session/login/callback/$'),
-    (5, 'GET', '^/session/logout/$'),
-    (6, 'GET', '^/session/unregister/$'),
-    (7, 'GET', '^/session/language/$'),
-    (8, 'GET', '^/session/setting/$'),
-    (9, 'POST', '^/session/setting/$'),
-    (11, 'GET', '^/subject/semesters/$'),
-    (12, 'GET', '^/subject/courses/$'),
-    (13, 'GET', '^/subject/courses/([0-9])/$'),
-    (14, 'GET', '^/subject/courses/autocomplete/$'),
-    (15, 'GET', '^/subject/courses/([0-9])/lectures/$'),
-    (16, 'GET', '^/subject/lectures/$'),
-    (17, 'GET', '^/subject/lectures/([0-9])/$'),
-    (18, 'GET', '^/subject/lectures/autocomplete/$'),
-    (19, 'GET', '^/subject/users/([0-9])/taken-courses/$'),
-    (20, 'GET', '^/subject/courses/([0-9])/reviews/$'),
-    (21, 'GET', '^/subject/lectures/([0-9])/reviews/$'),
-    (22, 'GET', '^/subject/lectures/([0-9])/related-reviews/$'),
-    (23, 'GET', '^/review/latest/([0-9])/$'),
-    (24, 'GET', '^/review/insert/([0-9])/$'),
-    (25, 'GET', '^/review/like/$'),
-    (26, 'GET', '^/review/read/$'),
-    (27, 'GET', '^/timetable/table_update/$'),
-    (28, 'GET', '^/timetable/table_create/$'),
-    (29, 'GET', '^/timetable/table_delete/$'),
-    (30, 'GET', '^/timetable/table_load/$'),
-    (31, 'GET', '^/timetable/wishlist_load/$'),
-    (32, 'GET', '^/timetable/wishlist_update/$'),
-    (33, 'GET', '^/timetable/share_image/$'),
-    (34, 'GET', '^/timetable/share_calendar/$'),
-    (35, 'GET', '^/external/google/google_auth_return/$'),
+    ('GET', '^/main/$'),
+    ('GET', '^/session/$'),
+    ('GET', '^/session/login/$'),
+    ('GET', '^/session/login/callback/$'),
+    ('GET', '^/session/logout/$'),
+    ('GET', '^/session/unregister/$'),
+    ('GET', '^/session/language/$'),
+    ('GET', '^/session/setting/$'),
+    ('POST', '^/session/setting/$'),
+    ('GET', '^/subject/semesters/$'),
+    ('GET', '^/subject/courses/$'),
+    ('GET', '^/subject/courses/([0-9])/$'),
+    ('GET', '^/subject/courses/autocomplete/$'),
+    ('GET', '^/subject/courses/([0-9])/lectures/$'),
+    ('GET', '^/subject/lectures/$'),
+    ('GET', '^/subject/lectures/([0-9])/$'),
+    ('GET', '^/subject/lectures/autocomplete/$'),
+    ('GET', '^/subject/users/([0-9])/taken-courses/$'),
+    ('GET', '^/subject/courses/([0-9])/reviews/$'),
+    ('GET', '^/subject/lectures/([0-9])/reviews/$'),
+    ('GET', '^/subject/lectures/([0-9])/related-reviews/$'),
+    ('GET', '^/review/latest/([0-9])/$'),
+    ('GET', '^/review/insert/([0-9])/$'),
+    ('GET', '^/review/like/$'),
+    ('GET', '^/review/read/$'),
+    ('GET', '^/timetable/table_update/$'),
+    ('GET', '^/timetable/table_create/$'),
+    ('GET', '^/timetable/table_delete/$'),
+    ('GET', '^/timetable/table_load/$'),
+    ('GET', '^/timetable/wishlist_load/$'),
+    ('GET', '^/timetable/wishlist_update/$'),
+    ('GET', '^/timetable/share_image/$'),
+    ('GET', '^/timetable/share_calendar/$'),
+    ('GET', '^/external/google/google_auth_return/$'),
 ]
 
 API_MANAGER = APIManager()
 def init():
     for api in APIS:
-        API_MANAGER.register(api[0], api[1], api[2])
+        API_MANAGER.register(api[0], api[1])
 
 def validate(line):
     d = json.loads(line)
@@ -91,6 +92,7 @@ def extract_pattern1(user_logs, min_length = 10, max_length = 20):
         for length in range(min_length, max_length + 1):
             p = []
             for api in logs:
+#                p.append(api.idx)
                 p.append((api.method, api.uri))
                 if len(p) == length:
                     candidates.append(tuple(p))
@@ -123,6 +125,7 @@ def getLCS(log1, log2):
     lcs = []
     while i > 0 and j > 0:
         if P[i][j] == 1:
+#            lcs = [log1[i - 1].idx] + lcs
             lcs = [(log1[i - 1].method, log1[i - 1].uri)] + lcs
             i -= 1
             j -= 1
@@ -164,3 +167,6 @@ if __name__ == '__main__':
         key = log['cookie']['csrftoken']
         api = API_MANAGER.find_by_uri(log['method'], log['URI'])
         if api: user_logs[key].append(api)
+
+    # print(extract_pattern1(user_logs))
+    # extract_pattern2(user_logs)
