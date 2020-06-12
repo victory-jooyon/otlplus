@@ -1,0 +1,9 @@
+{
+    "web": {
+        "client_id": "asdf",
+        "client_secret": "asdf",
+        "redirect_uris": ["asdf"],
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://accounts.google.com/o/oauth2/token"
+    }
+}

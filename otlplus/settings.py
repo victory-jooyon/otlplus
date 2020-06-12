@@ -19,15 +19,22 @@ LOG_FILE = os.path.join(BASE_DIR, 'request_middleware.log')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
+SECRET_KEY = "testplaceholder"
+SSO_KEY = ""
+SSO_CLIENT_ID = ""
+SSO_SECRET_KEY = ""
+SSO_IS_BETA = False
+GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = os.path.join(BASE_DIR, 'otlplus/google_oauth_placeholder.json')
 # SECURITY WARNING: keep the secret key used in production secret!
+if os.path.exists(os.path.join(BASE_DIR, 'keys')):
+    with open(os.path.join(BASE_DIR, 'keys/django_secret')) as f:
+        SECRET_KEY = f.read().strip()
 
-with open(os.path.join(BASE_DIR, 'keys/django_secret')) as f:
-    SECRET_KEY = f.read().strip()
-
-with open(os.path.join(BASE_DIR, 'keys/sso_secret')) as f:
-    SSO_KEY = f.read().strip()
-
-GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = os.path.join(BASE_DIR, 'keys/google_client_secrets.json')
+    with open(os.path.join(BASE_DIR, 'keys/sso_secret')) as f:
+        SSO_KEY = f.read().strip()
+    GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = os.path.join(BASE_DIR, 'keys/google_client_secrets.json')
+    SSO_CLIENT_ID = os.environ.get("SSO_CLIENT_ID")
+    SSO_SECRET_KEY = os.environ.get("SSO_SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
