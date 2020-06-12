@@ -1,6 +1,6 @@
 from locust import HttpUser, task, between
 
-class Subject(HttpUser):
+class OTL_Locust(HttpUser):
     wait_time = between(3, 5)
 
     code = "c857eb3a9234ccab38eb"
