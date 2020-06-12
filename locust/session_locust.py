@@ -1,15 +1,17 @@
-from locust import TaskSet, task
+from locust import HttpUser, constant, task
 
 code = "c857eb3a9234ccab38eb"
 state = "8d973242f7cca7d3e253"
 
-class Session(TaskSet):
+class Session(HttpUser):
+	wait_time = constant(1)
+
 	@task
 	def session(self):
 		return self.session_login()
 
 	@task
-	def session_login(self	):
+	def session_login(self):
 		url = "/session/login" \
 			# + "next=" + "/"
 
