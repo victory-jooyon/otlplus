@@ -49,12 +49,6 @@ class Session(HttpUser):
 	# 	response = self.client.post(url, name='session_unregister')
 	
 	@task
-	def session_info(self):
-		url = "/session/info"
-
-		response = self.client.get(url, name='session_info')
-		
-	@task
 	def session_language(self):
 		url = "/session/language"
 
