@@ -7,6 +7,7 @@ User 오브젝트는 로그인한 상태라면 http request가 발생할 때마�
 User 오브젝트 캐시는 userid를 이용하고, post_save/post_delete signal을 이용하여
 User 오브젝트가 변경될 때 해당 User에 대한 캐시를 invalidate한다.
 """
+import json
 import logging
 import time
 
@@ -73,7 +74,7 @@ class RequestMiddleware:
             'timestamp': time.time(),
             'requested_dt': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
         }
-        self.logger.info(log)
+        self.logger.info(json.dumps(log))
 
     def process_response(self, request, response):
         return response
