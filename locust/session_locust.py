@@ -47,20 +47,6 @@ class Session(TaskSet):
 	# 	response = self.client.post(url, name='session_unregister')
 	
 	@task
-	def session_department_options(self):
-		url = "/session/department_options"
-
-		response = self.client.get(url, name='session_department_options')
-	
-	@task
-	def session_favorite_departments(self):
-		url = "/session/favorite-departments"
-
-		data = { "fav_department": ["EE", "CS", "MSB"] }
-
-		response = self.client.post(url, data = data, name='session_favorite_departments')
-	
-	@task
 	def session_info(self):
 		url = "/session/info"
 
@@ -76,7 +62,7 @@ class Session(TaskSet):
 	def session_setting_get(self):
 		url = "/session/setting"
 
-		response = self.client.get(url, name='session_setting')
+		response = self.client.get(url, name='session_setting_get')
 	
 	@task
 	def session_setting_post(self):
@@ -84,4 +70,4 @@ class Session(TaskSet):
 		
 		data = { "fav_department": ["EE", "CS", "MSB"] }
 
-		response = self.client.post(url, name='session_setting')
+		response = self.client.post(url, name='session_setting_post')
