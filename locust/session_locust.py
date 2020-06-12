@@ -65,3 +65,23 @@ class Session(TaskSet):
 		url = "/session/info"
 
 		response = self.client.get(url, name='session_info')
+		
+	@task
+	def session_language(self):
+		url = "/session/language"
+
+		response = self.client.get(url, name='session_language')
+	
+	@task
+	def session_setting_get(self):
+		url = "/session/setting"
+
+		response = self.client.get(url, name='session_setting')
+	
+	@task
+	def session_setting_post(self):
+		url = "/session/setting"
+		
+		data = { "fav_department": ["EE", "CS", "MSB"] }
+
+		response = self.client.post(url, name='session_setting')
