@@ -2,6 +2,7 @@ import json
 import re
 from collections import defaultdict, Counter
 
+
 class API(object):
     def __init__(self, idx, method, uri):
         self.idx = idx
@@ -13,6 +14,7 @@ class API(object):
 
     def __eq__(self, rhs):
         return self.method == rhs.method and self.uri == rhs.uri
+
 
 class APIManager(object):
     api_map = {}
@@ -86,9 +88,11 @@ def init():
     for api in APIS:
         API_MANAGER.register(api[0], api[1])
 
+
 def validate(line):
     d = json.loads(line)
     return not d['URI'].endswith('.css') and not d['URI'].endswith('.js') and not 'media' in d['URI']
+
 
 def extract_pattern1(user_logs, min_length = 10, max_length = 20):
     candidates = []
@@ -98,7 +102,7 @@ def extract_pattern1(user_logs, min_length = 10, max_length = 20):
         if len(logs) < min_length: continue
         for length in range(min_length, max_length + 1):
             p = []
-            for api in logs:
+            for api, _ in logs:
 #                p.append(api.idx)
                 p.append((api.method, api.uri))
                 if len(p) == length:
@@ -106,6 +110,7 @@ def extract_pattern1(user_logs, min_length = 10, max_length = 20):
                     p.pop(0)
 
     return sorted(dict(Counter(candidates)).items(), key=lambda item: (item[1], len(item[0])), reverse=True)
+
 
 def getLCS(log1, log2):
     N = len(log1)
@@ -145,17 +150,34 @@ def getLCS(log1, log2):
 
     return lcs
 
+
 def extract_pattern2(user_logs):
     candidates = []
     keys = list(user_logs.keys())
     N = len(keys)
     for i in range(N):
         for j in range(i+1, N):
-            result = (tuple(getLCS(user_logs[keys[i]], user_logs[keys[j]])))
+            result = (tuple(getLCS([api for api, _ in user_logs[keys[i]]], [api for api, _ in user_logs[keys[j]]])))
             if len(result) > 1:
                 candidates.append(result)
 
     return sorted(dict(Counter(candidates)).items(), key=lambda item: (item[1], len(item[0])), reverse=True)
+
+
+def extract_pattern3(user_logs):
+    candidates = []
+    for user, api_logs in user_logs.items():
+
+        for api, log in api_logs:
+            withins = [a for a, l in api_logs if log['timestamp'] <= l['timestamp'] < log['timestamp'] + 5 * 60 * 1000]
+            if len(withins) >= 3:
+                p = []
+                for within in withins:
+                    p.append((within.method, within.uri))
+                candidates.append(tuple(p))
+
+    return sorted(dict(Counter(candidates)).items(), key=lambda item: (item[1], len(item[0])), reverse=True)
+
 
 if __name__ == '__main__':
     init()
@@ -173,7 +195,9 @@ if __name__ == '__main__':
         if 'csrftoken' not in log['cookie']: continue
         key = log['cookie']['csrftoken']
         api = API_MANAGER.find_by_uri(log['method'], log['URI'])
-        if api: user_logs[key].append(api)
+        if api: user_logs[key].append((api, log))
 
-    # print(extract_pattern1(user_logs))
+    for e in extract_pattern3(user_logs):
+        print(e)
     # extract_pattern2(user_logs)
+
