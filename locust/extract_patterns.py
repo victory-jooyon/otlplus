@@ -7,7 +7,7 @@ class API(object):
         self.idx = idx
         self.method = method
         self.uri = uri
-    
+
     def __str__(self):
         return f"Idx: {self.idx}, Method: {self.method}, URI: {self.uri}"
 
@@ -25,9 +25,9 @@ class APIManager(object):
         api = API(self.count, method, uri)
         self.idx_map[self.count] = api
         self.api_map[(method, uri)] = api
-    
+
     def find_by_idx(self, idx):
-        if idx in self.idx_map: return self.idx_map[uri]
+        if idx in self.idx_map: return self.idx_map[idx]
         return None
 
     def find_by_uri(self, method, uri):
@@ -63,15 +63,22 @@ APIS = [
     ('GET', '^/review/insert/([0-9])/$'),
     ('GET', '^/review/like/$'),
     ('GET', '^/review/read/$'),
-    ('GET', '^/timetable/table_update/$'),
-    ('GET', '^/timetable/table_create/$'),
-    ('GET', '^/timetable/table_delete/$'),
-    ('GET', '^/timetable/table_load/$'),
-    ('GET', '^/timetable/wishlist_load/$'),
-    ('GET', '^/timetable/wishlist_update/$'),
-    ('GET', '^/timetable/share_image/$'),
-    ('GET', '^/timetable/share_calendar/$'),
-    ('GET', '^/external/google/google_auth_return/$'),
+    ('GET', '^/timetable/$'),
+    ('POST', '^/timetable/api/table_update/$'),
+    ('POST', '^/timetable/api/table_create/$'),
+    ('POST', '^/timetable/api/table_delete/$'),
+    ('POST', '^/timetable/api/table_copy/$'),
+    ('POST', '^/timetable/api/table_load/$'),
+    ('POST', '^/timetable/api/autocomplete/$'),
+    ('POST', '^/timetable/api/search/$'),
+    ('POST', '^/timetable/api/comment_load/$'),
+    ('POST', '^/timetable/api/list_load_major/$'),
+    ('POST', '^/timetable/api/list_load_humanity/$'),
+    ('POST', '^/timetable/api/wishlist_load/$'),
+    ('POST', '^/timetable/api/wishlist_update/$'),
+    ('GET', '^/timetable/api/share_image/$'),
+    ('GET', '^/timetable/api/share_calendar/$'),
+    ('GET', '^/timetable/google_auth_return/$'),
 ]
 
 API_MANAGER = APIManager()
