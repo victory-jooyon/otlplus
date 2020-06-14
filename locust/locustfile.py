@@ -13,6 +13,8 @@ class OTL_Locust(HttpUser):
 
     csrf_token = None
 
+    lecture_id = 987440
+
     def on_start(self):
         self.get_main()
         self.session_login_callback()
@@ -205,9 +207,14 @@ class OTL_Locust(HttpUser):
     @task
     def comment_load(self):
         body = {
-            'lecture_id': 1,
+            'lecture_id': self.lecture_id,
         }
-        response = self.client.post('/timetable/api/comment_load', data=body, name='comment_load')
+        response = self.client.post('/timetable/api/comment_load/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='comment_load'
+        )
 
     @task
     def major_load(self):
@@ -215,7 +222,12 @@ class OTL_Locust(HttpUser):
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/list_load_major', data=body, name='major_load')
+        response = self.client.post('/timetable/api/list_load_major/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='major_load'
+        )
 
     @task
     def humanity_load(self):
@@ -223,7 +235,12 @@ class OTL_Locust(HttpUser):
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/list_load_humanity', data=body, name='humanity_load')
+        response = self.client.post('/timetable/api/list_load_humanity/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='humanity_load'
+        )
 
     @task
     def wishlist_load(self):
@@ -231,39 +248,56 @@ class OTL_Locust(HttpUser):
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/wishlist_load', data=body, name='wishlist_load')
+        response = self.client.post('/timetable/api/wishlist_load/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='wishlist_load'
+        )
 
     @task
-    def wishlist_update(self):
+    def wishlist_update(self):  # can fail due to call before load
         body = {
-            'lecture_id': 1,
+            'lecture_id': self.lecture_id,
             'delete': u'false',
         }
-        response = self.client.post('/timetable/api/wishlist_update', data=body, name='wishlist_update')
+        response = self.client.post('/timetable/api/wishlist_update/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='wishlist_update'
+        )
 
     @task
-    def wishlist_update_lecture_delete(self):
+    def wishlist_update_lecture_delete(self): # can fail due to call before update
         body = {
-            'lecture_id': 1,
+            'lecture_id': self.lecture_id,
             'delete': u'true',
         }
-        response = self.client.post('/timetable/api/wishlist_update', data=body, name='wishlist_update_lecture_delete')
+        response = self.client.post('/timetable/api/wishlist_update/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='wishlist_update_lecture_delete'
+        )
 
     @task
     def share_image(self):
+        table_id = self.table_create()
         params = {
-            'table_id': 1,
+            'table_id': table_id,
         }
         response = self.client.get('/timetable/api/share_image', params=params, name='share_image')
 
     @task
     def share_calander(self):
+        table_id = self.table_create()
         params = {
-            'table_id': 1,
+            'table_id': table_id,
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.get('/timetable/api/share_calander', params=params, name='share_calander')
+        response = self.client.get('/timetable/api/share_calendar', params=params, name='share_calander')
 
     @task
     def google_auth_return(self):
