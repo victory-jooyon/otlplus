@@ -2,9 +2,9 @@ import ast, astor
 import os
 
 temp_patterns = [
-    ["session_login", "session_login_callback", 'session_setting_get'],
-    ["session_login", "session_login_callback", "session_language", "session_language", "session_setting_post"],
-    ["session_login_callback", "session_setting_get", "session_setting_post"]
+    (("session_login", "session_login_callback", 'session_setting_get'), 3),
+    (("session_login", "session_login_callback", "session_language", "session_language", "session_setting_post"), 3),
+    (("session_login_callback", "session_setting_get", "session_setting_post"), 5)
 ]
 
 def is_HttpUser_Inherit_class(x):
@@ -31,11 +31,17 @@ def remove_task_decorator(x):
                 x.decorator_list.remove(decorator)
                 return
 
-def create_basic_task(func_name):
+def create_basic_task(func_name, weight):
     arg = ast.arg('self', None)
     args = ast.arguments([arg], None, [], [], None, [])
 
-    decorator_list = [ast.Name('task', None)]
+    decorator_list = [
+        ast.Call(
+            ast.Name('task', None),
+            [ast.Num(weight)],
+            []
+        )
+    ]
 
     return ast.FunctionDef(func_name, args, [], decorator_list, None)
 
@@ -66,10 +72,11 @@ def generate_locust_file(input_filename, output_filename, patterns):
     
     # add task by pattern
     for i in range(len(patterns)):
+        pattern_list, weight = patterns[i]
+    
         func_name = f"pattern_{i}"
-        task_func_def = create_basic_task(func_name)
+        task_func_def = create_basic_task(func_name, weight)
 
-        pattern_list = patterns[i]
         for j in range(len(pattern_list)):
             pattern_fname = pattern_list[j]
             if (pattern_fname is None):
