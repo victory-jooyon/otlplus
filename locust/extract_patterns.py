@@ -113,7 +113,7 @@ def init():
 
 def validate(line):
     d = json.loads(line)
-    return not d['URI'].endswith('.css') and not d['URI'].endswith('.js') and not d['URI'].endswith('&filter=HSS') and not 'media' in d['URI']
+    return not d['URI'].endswith('.css') and not d['URI'].endswith('.js') and not d['URI'].endswith('&filter=HSS') and not d['URI'].endswith('.ico') and not 'media' in d['URI']
 
 
 def extract_pattern1(user_logs, min_length = 10, max_length = 20):
@@ -160,7 +160,7 @@ def getLCS(log1, log2):
     while i > 0 and j > 0:
         if P[i][j] == 1:
 #            lcs = [log1[i - 1].idx] + lcs
-            lcs = [(log1[i - 1].method, log1[i - 1].uri)] + lcs
+            lcs = [log1[i - 1].func_name] + lcs
             i -= 1
             j -= 1
         elif P[i][j] == 2:
@@ -195,7 +195,7 @@ def extract_pattern3(user_logs):
             if len(withins) >= 5:
                 p = []
                 for within in withins:
-                    p.append((within.method, within.uri))
+                    p.append(within.func_name)
                 candidates.append(tuple(p))
 
     return sorted(dict(Counter(candidates)).items(), key=lambda item: (item[1], len(item[0])), reverse=True)
@@ -210,7 +210,7 @@ def extract_pattern4(user_logs):
     apis = []
     for user, api_logs in user_logs.items():
         # 연속한 같은 api는 하나로 처리 (e.g. AABBA -> ABA)
-        apis.append([x[0] for x in groupby([(a.method, a.uri) for a, _ in api_logs])])
+        apis.append([x[0] for x in groupby([a.func_name for a, _ in api_logs])])
 
     combis = list(combinations(apis, 2))
     for a, b in combis:
@@ -249,7 +249,6 @@ if __name__ == '__main__':
         api = API_MANAGER.find_by_uri(log['method'], log['URI'])
         if api: user_logs[key].append((api, log))
 
-    for e in extract_pattern1(user_logs):
-        print(e)
+    print(extract_pattern4(user_logs))
     # extract_pattern2(user_logs)
 
