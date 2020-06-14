@@ -42,7 +42,7 @@ class APIManager(object):
         return API(None, method, uri)
 
 APIS = [
-    ('GET', '^/main/$', None),
+    ('GET', '^/main/$', 'get_main'),
     ('GET', '^/session/$', 'session'),
     ('GET', '^/session/login/$', 'session_login'),
     ('GET', '^/session/login/callback/$', 'session_login_callback'),
@@ -61,7 +61,7 @@ APIS = [
     ('GET', '^/api/lectures', 'get_lectures'),
     ('GET', '^/api/lectures/autocomplete/$', 'get_Lectures_auto_complete'),
     ('GET', '^/api/users/([0-9])/taken-courses/$', 'get_taken_courses'),
-    ('GET', '^main', 'get_main'),
+    ('GET', '^main', None),
     ('GET', '^credit/$', 'get_credit'),
     ('GET', '^license/$', 'get_license'),
     ('GET', '^/review/json/([0-9])/$', 'get_last_comment_json'),
@@ -71,7 +71,7 @@ APIS = [
     ('GET', '^/review/result/course/([1-9][0-9]*)/([^/]+)/$', 'get_course_review'),
     ('GET', '^/review/result/course/([^/]+)/([^/]+)/json/([^/]+)/$', 'get_course_review_json'),
     ('GET', '^/review/result/$', 'get_result'),
-    ('GET', '^/review/result/json/(?P<page>[0-9]+)/$', get_result_json),
+    ('GET', '^/review/result/json/(?P<page>[0-9]+)/$', 'get_result_json'),
 
     # ('GET', '^/subject/courses/([0-9])/reviews/$'),
     # ('GET', '^/subject/lectures/([0-9])/reviews/$'),
@@ -93,7 +93,7 @@ APIS = [
     ('POST', '^/timetable/api/list_load_humanity/$', 'humanity_load'),
     ('POST', '^/timetable/api/wishlist_load/$', 'wishlist_load'),
     ('POST', '^/timetable/api/wishlist_update/$', 'wishlist_update'),
-    ('DELETE', '^/timetable/api/wishlist_update', None),      # DELETE인데 사실 POST임
+    ('DELETE', '^/timetable/api/wishlist_update', 'wishlist_update_lecture_delete'),      # DELETE인데 사실 POST임
     ('GET', '^/timetable/api/share_image/$', 'share_image'),
     ('GET', '^/timetable/api/share_calendar/$', 'share_calander'),
     ('GET', '^/timetable/google_auth_return/$', 'google_auth_return'),
