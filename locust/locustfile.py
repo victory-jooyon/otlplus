@@ -293,6 +293,10 @@ class OTL_Locust(HttpUser):
         self.client.get("/review/refresh/", name='refresh_review')
 
     @task
+    def insert_review(self):
+        self.client.get("/review/refresh/", name='insert_review')
+
+    @task
     def get_credit(self):
         self.client.get("/credit", name='get_credit')
 
@@ -309,7 +313,7 @@ class OTL_Locust(HttpUser):
 
     @task
     def get_comment(self):
-        self.client.get(f"/review/comment/{self.course_id}", name='get_comment')
+        self.client.get(f"/review/result/comment/{self.course_id}", name='get_comment')
 
     @task
     def get_professor_review(self):

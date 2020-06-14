@@ -43,6 +43,7 @@ class APIManager(object):
         return API(None, method, uri, None)
 
 APIS = [
+    ('GET', '^/$', 'get_main'),
     ('GET', '^/main/$', 'get_main'),
     ('GET', '^/session/$', 'session'),
     ('GET', '^/session/login/$', 'session_login'),
@@ -54,23 +55,25 @@ APIS = [
     ('POST', '^/session/settings/$', 'session_setting_post'),
     ('GET', '^/api/subject/semesters/$', 'None-^/api/subject/semesters/$'),
     ('GET', '^/api/subject/courses/$', 'None-^/api/subject/courses/$'),
-    ('GET', '^/api/subject/courses/([0-9])/$', 'None-^/api/subject/courses/([0-9])/$'),
+    ('GET', '^/api/subject/courses/([0-9]*)/$', 'None-^/api/subject/courses/([0-9])/$'),
     ('GET', '^/api/subject/courses/autocomplete/$', 'None-^/api/subject/courses/autocomplete/$'),
-    ('GET', '^/api/subject/courses/([0-9])/lectures/$', 'None-^/api/subject/courses/([0-9])/lectures/$'),
+    ('GET', '^/api/subject/courses/([0-9]*)/lectures/$', 'None-^/api/subject/courses/([0-9])/lectures/$'),
     ('GET', '^/api/subject/lectures/$', 'None-^/api/subject/lectures/$'),
     # ('GET', '^/subject/lectures/([0-9])/$'),
     ('GET', '^/api/lectures', 'get_lectures'),
     ('GET', '^/api/lectures/autocomplete/$', 'get_Lectures_auto_complete'),
-    ('GET', '^/api/users/([0-9])/taken-courses/$', 'get_taken_courses'),
+    ('GET', '^/api/users/([0-9]*)/taken-courses/$', 'get_taken_courses'),
     ('GET', '^main', 'None-^main'),
     ('GET', '^/credit/$', 'get_credit'),
     ('GET', '^/license/$', 'get_license'),
     ('GET', '^/review/$', 'get_review'),
     ('GET', '^/review/refresh/$', 'refresh_review'),
-    ('GET', '^/review/json/([0-9])/$', 'get_last_comment_json'),
-    ('GET', '^/review/comment/([1-9][0-9]*)/$', 'get_comment'),
-    ('GET', '^/review/result/professor/([1-9][0-9]*)/([^/]+)/$', 'get_professor_review'),
+    ('GET', '^/review/insert/$', 'insert_review'),
+    ('GET', '^/review/json/([0-9]*)/$', 'get_last_comment_json'),
+    ('GET', '^/review/result/comment/([0-9]*)/$', 'get_comment'),
+    ('GET', '^/review/result/professor/([0-9]*)/([^/]+)/$', 'get_professor_review'),
     ('GET', '^/review/result/professor/([^/]+)/json/([^/]+)/([^/]+)/$', 'get_professor_review_json'),
+    ('GET', '^/review/result/course/([0-9]*)/$', 'get_course_review'),
     ('GET', '^/review/result/course/([1-9][0-9]*)/([^/]+)/$', 'get_course_review'),
     ('GET', '^/review/result/course/([^/]+)/([^/]+)/json/([^/]+)/$', 'get_course_review_json'),
     ('GET', '^/review/result/$', 'get_result'),
@@ -110,7 +113,7 @@ def init():
 
 def validate(line):
     d = json.loads(line)
-    return not d['URI'].endswith('.css') and not d['URI'].endswith('.js') and not 'media' in d['URI']
+    return not d['URI'].endswith('.css') and not d['URI'].endswith('.js') and not d['URI'].endswith('&filter=HSS') and not 'media' in d['URI']
 
 
 def extract_pattern1(user_logs, min_length = 10, max_length = 20):
