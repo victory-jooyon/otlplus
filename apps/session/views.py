@@ -49,13 +49,29 @@ def login_callback(request):
     state_before = request.session.get('sso_state', 'default before state')
     state = request.GET.get('state', 'default state')
 
-    if state_before != state:
-        return render(request, 'session/login_error.html',
-                      {'error_title': "Login Error",
-                       'error_message': "Invalid login"})
+    # if state_before != state:
+    #     return render(request, 'session/login_error.html',
+    #                   {'error_title': "Login Error",
+    #                    'error_message': "Invalid login"})
 
     code = request.GET.get('code')
-    sso_profile = sso_client.get_user_info(code)
+    # sso_profile = sso_client.get_user_info(code)
+    sso_profile = {
+        u'first_name': u'\uc7ac\uc601',
+        u'last_name': u'\ud669',
+        u'kaist_id': u'',
+        u'uid': u'1ff7de1fd6272f8982fb',
+        u'gender': u'*M',
+        u'facebook_id': u'',
+        u'twitter_id': u'',
+        u'birthday': u'1997-11-24',
+        u'flags': [u'TEST', u'SPARCS'],
+        u'sid': u'43760d931fadde80aee2',
+        u'kaist_info': u'',
+        u'sparcs_id': u'akais',
+        u'email': u'akqq24@kaist.ac.kr',
+        u'kaist_info_time': u''
+    }
     username = sso_profile['sid']
 
     user_list = User.objects.filter(username=username)
