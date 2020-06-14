@@ -1,6 +1,7 @@
 import json
 import re
 from collections import defaultdict, Counter
+from itertools import combinations
 
 
 class API(object):
@@ -184,11 +185,40 @@ def extract_pattern3(user_logs):
 
         for api, log in api_logs:
             withins = [a for a, l in api_logs if log['timestamp'] <= l['timestamp'] < log['timestamp'] + 5 * 60 * 1000]
-            if len(withins) >= 3:
+            if len(withins) >= 5:
                 p = []
                 for within in withins:
                     p.append((within.method, within.uri))
                 candidates.append(tuple(p))
+
+    return sorted(dict(Counter(candidates)).items(), key=lambda item: (item[1], len(item[0])), reverse=True)
+
+
+def print_mat_2d(mat):
+  for i in range(len(mat)): print(mat[i])
+
+
+def extract_pattern4(user_logs):
+    candidates = []
+    apis = []
+    for user, api_logs in user_logs.items():
+        apis.append([(a.method, a.uri) for a, _ in api_logs])
+
+    combis = list(combinations(apis, 2))
+    for a, b in combis:
+        la = len(a)
+        lb = len(b)
+
+        d = [[0 for _ in range(int(lb+1))] for _ in range(int(la+1))]
+        for i in range(0, la):
+            for j in range(0, lb):
+                d[i][j] = max(d[i-1][j], d[i][j-1], d[i-1][j-1]+1) if a[i] == b[j] else max(d[i][j-1], d[i-1][j])
+
+        if d[la-1][lb-1] >= 5 and (d[la-1][lb-1] / min(la, lb)) >= 0.8:
+            if la >= lb:
+                candidates.append(tuple(a))
+            else:
+                candidates.append(tuple(b))
 
     return sorted(dict(Counter(candidates)).items(), key=lambda item: (item[1], len(item[0])), reverse=True)
 
