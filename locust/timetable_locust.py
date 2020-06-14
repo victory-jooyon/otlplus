@@ -9,20 +9,20 @@ class Timetable(HttpUser):
         response = self.client.get('timetable')
 
     @task
-    def table_update(self):
-        body = {
-            'table_id': 1,
-            'lecture_id': 1,
-            'delete': u'false',
-        }
-        response = self.client.post('timetable/api/table_update', data=body)
-
-    @task
     def table_update_lecture_delete(self):
         body = {
             'table_id': 1,
             'lecture_id': 1,
             'delete': u'true',
+        }
+        response = self.client.post('timetable/api/table_update', data=body)
+
+    @task
+    def table_update(self):
+        body = {
+            'table_id': 1,
+            'lecture_id': 1,
+            'delete': u'false',
         }
         response = self.client.post('timetable/api/table_update', data=body)
 
