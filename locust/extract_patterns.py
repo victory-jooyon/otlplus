@@ -39,7 +39,8 @@ class APIManager(object):
             m, u = key
             if method == m and re.search(u, uri):
                 return self.api_map[key]
-        return API(None, method, uri)
+        print('----------fail', method, uri)
+        return API(None, method, uri, None)
 
 APIS = [
     ('GET', '^/main/$', 'get_main'),
@@ -47,23 +48,25 @@ APIS = [
     ('GET', '^/session/login/$', 'session_login'),
     ('GET', '^/session/login/callback/$', 'session_login_callback'),
     ('GET', '^/session/logout/$', 'session_logout'),
-    ('GET', '^/session/unregister/$', None),
+    ('GET', '^/session/unregister/$', 'None-^/session/unregister/$'),
     ('GET', '^/session/language/$', 'session_language'),
     ('GET', '^/session/settings/$', 'session_setting_get'),
     ('POST', '^/session/settings/$', 'session_setting_post'),
-    ('GET', '^/api/subject/semesters/$', None),
-    ('GET', '^/api/subject/courses/$', None),
-    ('GET', '^/api/subject/courses/([0-9])/$', None),
-    ('GET', '^/api/subject/courses/autocomplete/$', None),
-    ('GET', '^/api/subject/courses/([0-9])/lectures/$', None),
-    ('GET', '^/api/subject/lectures/$', None),
+    ('GET', '^/api/subject/semesters/$', 'None-^/api/subject/semesters/$'),
+    ('GET', '^/api/subject/courses/$', 'None-^/api/subject/courses/$'),
+    ('GET', '^/api/subject/courses/([0-9])/$', 'None-^/api/subject/courses/([0-9])/$'),
+    ('GET', '^/api/subject/courses/autocomplete/$', 'None-^/api/subject/courses/autocomplete/$'),
+    ('GET', '^/api/subject/courses/([0-9])/lectures/$', 'None-^/api/subject/courses/([0-9])/lectures/$'),
+    ('GET', '^/api/subject/lectures/$', 'None-^/api/subject/lectures/$'),
     # ('GET', '^/subject/lectures/([0-9])/$'),
     ('GET', '^/api/lectures', 'get_lectures'),
     ('GET', '^/api/lectures/autocomplete/$', 'get_Lectures_auto_complete'),
     ('GET', '^/api/users/([0-9])/taken-courses/$', 'get_taken_courses'),
-    ('GET', '^main', None),
-    ('GET', '^credit/$', 'get_credit'),
-    ('GET', '^license/$', 'get_license'),
+    ('GET', '^main', 'None-^main'),
+    ('GET', '^/credit/$', 'get_credit'),
+    ('GET', '^/license/$', 'get_license'),
+    ('GET', '^/review/$', 'get_review'),
+    ('GET', '^/review/refresh/$', 'refresh_review'),
     ('GET', '^/review/json/([0-9])/$', 'get_last_comment_json'),
     ('GET', '^/review/comment/([1-9][0-9]*)/$', 'get_comment'),
     ('GET', '^/review/result/professor/([1-9][0-9]*)/([^/]+)/$', 'get_professor_review'),
@@ -120,7 +123,7 @@ def extract_pattern1(user_logs, min_length = 10, max_length = 20):
             p = []
             for api, _ in logs:
 #                p.append(api.idx)
-                p.append((api.method, api.uri))
+                p.append(api.func_name)
                 if len(p) == length:
                     candidates.append(tuple(p))
                     p.pop(0)
@@ -243,7 +246,7 @@ if __name__ == '__main__':
         api = API_MANAGER.find_by_uri(log['method'], log['URI'])
         if api: user_logs[key].append((api, log))
 
-    for e in extract_pattern3(user_logs):
+    for e in extract_pattern1(user_logs):
         print(e)
     # extract_pattern2(user_logs)
 

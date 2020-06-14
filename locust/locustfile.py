@@ -132,7 +132,7 @@ class OTL_Locust(HttpUser):
     def get_taken_courses(self):
         user_id = "1"
         self.client.get(f"/api/users/{user_id}/taken-courses", name='get_taken_courses')
-    
+
     # timetable APIs
     @task
     def get_table(self):
@@ -283,6 +283,14 @@ class OTL_Locust(HttpUser):
     @task
     def get_main(self):
         self.client.get("/main", name='get_main')
+
+    @task
+    def get_review(self):
+        self.client.get("/review/", name='get_review')
+
+    @task
+    def refresh_review(self):
+        self.client.get("/review/refresh/", name='refresh_review')
 
     @task
     def get_credit(self):
