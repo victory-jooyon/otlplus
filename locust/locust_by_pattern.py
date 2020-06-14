@@ -1,18 +1,10 @@
 import ast, astor
-
-temp_func_name_map = [
-    "session_login",
-    "session_login_callback",
-    "session_logout",
-    "session_language",
-    "session_setting_get",
-    "session_setting_post"
-]
+import os
 
 temp_patterns = [
-    [0, 1, 2],
-    [0, 1, 1, 2, 4],
-    [1, 3, 4]
+    ["session_login", "session_login_callback", 'session_setting_get'],
+    ["session_login", "session_login_callback", "session_language", "session_language", "session_setting_post"],
+    ["session_login_callback", "session_setting_get", "session_setting_post"]
 ]
 
 def is_HttpUser_Inherit_class(x):
@@ -48,11 +40,11 @@ def create_basic_task(func_name):
     return ast.FunctionDef(func_name, args, [], decorator_list, None)
 
 def create_file_with_content(file_name, content):
-    f = open(file_name, "w", 0)
+    f = open(file_name, "w", encoding="utf-8")
     f.write(content)
     f.close()
 
-def generate_locust_file(input_filename, output_filename, func_name_map, patterns):
+def generate_locust_file(input_filename, output_filename, patterns):
     ast_tree = astor.code_to_ast.parse_file(input_filename)
     print(astor.dump_tree(ast_tree))
 
@@ -77,11 +69,15 @@ def generate_locust_file(input_filename, output_filename, func_name_map, pattern
         func_name = f"pattern_{i}"
         task_func_def = create_basic_task(func_name)
 
-        pattern = patterns[i]
-        for j in range(len(pattern)):
+        pattern_list = patterns[i]
+        for j in range(len(pattern_list)):
+            pattern_fname = pattern_list[j]
+            if (pattern_fname is None):
+                continue
+        
             pattern_elem_func = ast.Attribute(
                 ast.Name('self', None),
-                func_name_map[pattern[j]],
+                pattern_fname,
                 None
             )
 
@@ -92,5 +88,15 @@ def generate_locust_file(input_filename, output_filename, func_name_map, pattern
 
     create_file_with_content(output_filename, astor.to_source(ast_tree))
 
+def execute_locust(file_name, host, u, r):
+    print("EXEC")
+    cmd = f"locust -f {file_name} --host={host} -u {u} -r {r}"
 
-generate_locust_file("locustfile.py", "locustfile_p.py", temp_func_name_map, temp_patterns)
+    os.system(cmd)
+    print("END")
+
+src_file = "locustfile.py"
+output_file = "locustfile_p.py"
+
+generate_locust_file(src_file, output_file, temp_patterns)
+execute_locust(output_file, "http://13.125.233.178:8000", 5, 5)
