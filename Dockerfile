@@ -30,4 +30,4 @@ RUN /otlplus/venv/bin/pip install -r requirements.txt
 EXPOSE 7000
 
 ENV PATH "/otlplus/venv/bin:$PATH"
-CMD ["gunicorn", "-b", "0.0.0.0:7000", "otlplus.wsgi:application"]
+CMD ["/otlplus/www/entrypoint.sh"]
