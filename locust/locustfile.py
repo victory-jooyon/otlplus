@@ -8,8 +8,8 @@ class OTL_Locust(HttpUser):
     state = "8d973242f7cca7d3e253"
 
     user_id = "1"
-    course_id = "1973"  # CS453
-    professor_id = "2007"
+    course_id = "865"
+    professor_id = "796"
 
     csrf_token = None
 
@@ -255,12 +255,12 @@ class OTL_Locust(HttpUser):
         self.client.get("/review/refresh/", name='insert_review')
 
     @task
-    def get_credit(self):
-        self.client.get("/credit", name='get_credit')
+    def get_credits(self):
+        self.client.get("/credits", name='get_credits')
 
     @task
-    def get_license(self):
-        self.client.get("/license", name='get_license')
+    def get_licenses(self):
+        self.client.get("/licenses", name='get_licenses')
 
     @task
     def get_last_comment_json(self):
@@ -283,16 +283,16 @@ class OTL_Locust(HttpUser):
 
     @task
     def get_course_review(self):
-        self.client.get(f"/review/result/course/{self.course_id}/{self.professor_id}/", name='get_course_review')
+        self.client.get(f"/review/result/course/{self.course_id}/1/", name='get_course_review')
 
     @task
     def get_course_review_json(self):
-        self.client.get(f"/review/result/course/{self.course_id}/{self.professor_id}/1/", name='get_course_review_json')
+        self.client.get(f"/review/result/course/{self.course_id}/1/json/1", name='get_course_review_json')
 
     @task
     def get_result(self):
         params = {
-            "q": "테스팅",    # 키워드
+            "q": "논리적",    # 키워드
             "sort": "name",
             # "sort": "total",
             # "sort": "grade",
@@ -308,7 +308,7 @@ class OTL_Locust(HttpUser):
     @task
     def get_result_json(self):
         params = {
-            "q": "테스팅",    # 키워드
+            "q": "논리적",    # 키워드
             "sort": "name",
             # "sort": "total",
             # "sort": "grade",
@@ -319,4 +319,4 @@ class OTL_Locust(HttpUser):
             # "type": "",
             # "grade": "",
         }
-        self.client.get("/review/result.json/1/", params=params, name='get_result_json')
+        self.client.get("/review/result/json/1/", params=params, name='get_result_json')
