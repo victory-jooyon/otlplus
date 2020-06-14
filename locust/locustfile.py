@@ -1,5 +1,5 @@
 from locust import HttpUser, task, between
-
+import json
 
 class OTL_Locust(HttpUser):
     wait_time = between(3, 5)
@@ -194,10 +194,11 @@ class OTL_Locust(HttpUser):
 
     @task
     def table_search(self):
-        body = """{
-            'year': 2018,
-            'semester': 1,
-        }"""
+        body = json.dumps({
+            "year": 2018,
+            "semester": 1,
+            "keyword": "논리",
+        })
         response = self.client.post('/timetable/api/search/',
             data=body,
             headers={"X-CSRFToken": self.csrf_token},
