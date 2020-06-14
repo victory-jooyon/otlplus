@@ -96,21 +96,31 @@ class OTL_Locust(HttpUser):
 
     @task
     def table_update_lecture_delete(self):
+        table_id = self.table_create()
         body = {
-            'table_id': 1,
-            'lecture_id': 1,
+            'table_id': table_id,
+            'lecture_id': 1377884,
             'delete': u'true',
         }
-        response = self.client.post('/timetable/api/table_update', data=body, name='table_update_lecture_delete')
+        response = self.client.post('/timetable/api/table_update/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='table_update')
 
     @task
     def table_update(self):
+        table_id = self.table_create()
         body = {
-            'table_id': 1,
-            'lecture_id': 1,
+            'table_id': table_id,
+            'lecture_id': 1377884,
             'delete': u'false',
         }
-        response = self.client.post('/timetable/api/table_update', data=body, name='table_update')
+        response = self.client.post('/timetable/api/table_update/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='table_update')
 
     @task
     def table_create(self):
@@ -119,25 +129,41 @@ class OTL_Locust(HttpUser):
             'semester': 1,
             'lectures': [1, 2],
         }
-        response = self.client.post('/timetable/api/table_create', data=body, name='table_create')
+        response = self.client.post('/timetable/api/table_create/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='table_create')
+
+        return response.json()["id"]
 
     @task
     def table_delete(self):
+        table_id = self.table_create()
         body = {
-            'table_id': 1,
+            'table_id': table_id,
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/table_delete', data=body, name='table_delete')
+        response = self.client.post('/timetable/api/table_delete/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='table_delete')
 
     @task
     def table_copy(self):
+        table_id = self.table_create()
         body = {
-            'table_id': 1,
+            'table_id': table_id,
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/table_copy', data=body, name='table_copy')
+        response = self.client.post('/timetable/api/table_copy/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='table_copy')
 
     @task
     def table_load(self):
@@ -145,7 +171,11 @@ class OTL_Locust(HttpUser):
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/table_load', data=body, name='table_load')
+        response = self.client.post('/timetable/api/table_load/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='table_load')
 
     @task
     def table_autocomplete(self):
@@ -154,15 +184,23 @@ class OTL_Locust(HttpUser):
             'semester': 1,
             'keyword': '논리',
         }
-        response = self.client.post('/timetable/api/autocomplete', data=body, name='table_autocomplete')
+        response = self.client.post('/timetable/api/autocomplete/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='table_autocomplete')
 
     @task
     def table_search(self):
-        body = {
+        body = """{
             'year': 2018,
             'semester': 1,
-        }
-        response = self.client.post('/timetable/api/search', data=body, name='table_search')
+        }"""
+        response = self.client.post('/timetable/api/search/',
+            data=body,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='table_search')
 
     @task
     def comment_load(self):
