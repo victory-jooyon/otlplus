@@ -78,7 +78,7 @@ class OTL_Locust(HttpUser):
     # subject APIs
     @task
     def get_semesters(self):
-        self.client.get("/api/semesters")
+        self.client.get("/api/semesters", name='get_semesters')
 
     @task
     def get_courses(self):
@@ -89,20 +89,20 @@ class OTL_Locust(HttpUser):
             "term": "ALL",
             "keyword": "cs453"
         }
-        self.client.get("/api/courses", params=params)
+        self.client.get("/api/courses", params=params, name='get_courses')
 
     @task
     def get_course(self):
-        self.client.get(f"/api/courses/{self.course_id}")
+        self.client.get(f"/api/courses/{self.course_id}", name='get_course')
 
     @task
     def get_courses_auto_complete(self):
         params = {"keyword": "전산"}
-        self.client.get("/api/courses/autocomplete", params=params)
+        self.client.get("/api/courses/autocomplete", params=params, name='get_courses_auto_complete')
 
     @task
     def get_lectures_from_course(self):
-        self.client.get(f"/api/courses/{self.course_id}/lectures")
+        self.client.get(f"/api/courses/{self.course_id}/lectures", name='get_lectures_from_course')
 
     @task
     def get_lectures(self):
@@ -117,7 +117,7 @@ class OTL_Locust(HttpUser):
             "end": "",
             "keyword": "테스팅",
         }
-        self.client.get("/api/lectures", params=params)
+        self.client.get("/api/lectures", params=params, name='get_lectures')
 
     @task
     def get_Lectures_auto_complete(self):
@@ -126,17 +126,17 @@ class OTL_Locust(HttpUser):
             "semester": "1",
             "keyword": "cs"
         }
-        self.client.get("/api/lectures/automcomplete", params=params)
+        self.client.get("/api/lectures/automcomplete", params=params, name='get_Lectures_auto_complete')
 
     @task
     def get_taken_courses(self):
         user_id = "1"
-        self.client.get(f"/api/users/{user_id}/taken-courses")
+        self.client.get(f"/api/users/{user_id}/taken-courses", name='get_taken_courses')
     
     # timetable APIs
     @task
     def get_table(self):
-        response = self.client.get('/timetable')
+        response = self.client.get('/timetable', name='get_table')
 
     @task
     def table_update_lecture_delete(self):
@@ -145,7 +145,7 @@ class OTL_Locust(HttpUser):
             'lecture_id': 1,
             'delete': u'true',
         }
-        response = self.client.post('/timetable/api/table_update', data=body)
+        response = self.client.post('/timetable/api/table_update', data=body, name='table_update_lecture_delete')
 
     @task
     def table_update(self):
@@ -154,7 +154,7 @@ class OTL_Locust(HttpUser):
             'lecture_id': 1,
             'delete': u'false',
         }
-        response = self.client.post('/timetable/api/table_update', data=body)
+        response = self.client.post('/timetable/api/table_update', data=body, name='table_update')
 
     @task
     def table_create(self):
@@ -163,7 +163,7 @@ class OTL_Locust(HttpUser):
             'semester': 1,
             'lectures': [1, 2],
         }
-        response = self.client.post('/timetable/api/table_create', data=body)
+        response = self.client.post('/timetable/api/table_create', data=body, name='table_create')
 
     @task
     def table_delete(self):
@@ -172,7 +172,7 @@ class OTL_Locust(HttpUser):
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/table_delete', data=body)
+        response = self.client.post('/timetable/api/table_delete', data=body, name='table_delete')
 
     @task
     def table_copy(self):
@@ -181,7 +181,7 @@ class OTL_Locust(HttpUser):
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/table_copy', data=body)
+        response = self.client.post('/timetable/api/table_copy', data=body, name='table_copy')
 
     @task
     def table_load(self):
@@ -189,31 +189,31 @@ class OTL_Locust(HttpUser):
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/table_load', data=body)
+        response = self.client.post('/timetable/api/table_load', data=body, name='table_load')
 
     @task
-    def autocomplete(self):
+    def table_autocomplete(self):
         body = {
             'year': 2018,
             'semester': 1,
             'keyword': '논리',
         }
-        response = self.client.post('/api/autocomplete', data=body)
+        response = self.client.post('/timetable/api/autocomplete', data=body, name='table_autocomplete')
 
     @task
-    def search(self):
+    def table_search(self):
         body = {
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/api/search', data=body)
+        response = self.client.post('/timetable/api/search', data=body, name='table_search')
 
     @task
     def comment_load(self):
         body = {
             'lecture_id': 1,
         }
-        response = self.client.post('/timetable/api/comment_load', data=body)
+        response = self.client.post('/timetable/api/comment_load', data=body, name='comment_load')
 
     @task
     def major_load(self):
@@ -221,7 +221,7 @@ class OTL_Locust(HttpUser):
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/list_load_major', data=body)
+        response = self.client.post('/timetable/api/list_load_major', data=body, name='major_load')
 
     @task
     def humanity_load(self):
@@ -229,7 +229,7 @@ class OTL_Locust(HttpUser):
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/list_load_humanity', data=body)
+        response = self.client.post('/timetable/api/list_load_humanity', data=body, name='humanity_load')
 
     @task
     def wishlist_load(self):
@@ -237,7 +237,7 @@ class OTL_Locust(HttpUser):
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.post('/timetable/api/wishlist_load', data=body)
+        response = self.client.post('/timetable/api/wishlist_load', data=body, name='wishlist_load')
 
     @task
     def wishlist_update(self):
@@ -245,7 +245,7 @@ class OTL_Locust(HttpUser):
             'lecture_id': 1,
             'delete': u'false',
         }
-        response = self.client.post('/timetable/api/wishlist_update', data=body)
+        response = self.client.post('/timetable/api/wishlist_update', data=body, name='wishlist_update')
 
     @task
     def wishlist_update_lecture_delete(self):
@@ -253,14 +253,14 @@ class OTL_Locust(HttpUser):
             'lecture_id': 1,
             'delete': u'true',
         }
-        response = self.client.post('/timetable/api/wishlist_update', data=body)
+        response = self.client.post('/timetable/api/wishlist_update', data=body, name='wishlist_update_lecture_delete')
 
     @task
     def share_image(self):
         params = {
             'table_id': 1,
         }
-        response = self.client.get('/timetable/api/share_image', params=params)
+        response = self.client.get('/timetable/api/share_image', params=params, name='share_image')
 
     @task
     def share_calander(self):
@@ -269,55 +269,55 @@ class OTL_Locust(HttpUser):
             'year': 2018,
             'semester': 1,
         }
-        response = self.client.get('/timetable/api/share_calander', params=params)
+        response = self.client.get('/timetable/api/share_calander', params=params, name='share_calander')
 
     @task
     def google_auth_return(self):
         params = {
             'state': 'some-valid-token',
         }
-        response = self.client.get('/timetable/google_auth_return', params=params)
+        response = self.client.get('/timetable/google_auth_return', params=params, name='google_auth_return')
 
 
     # review APIs
     @task
     def get_main(self):
-        self.client.get("/main")
+        self.client.get("/main", name='get_main')
 
     @task
     def get_credit(self):
-        self.client.get("/credit")
+        self.client.get("/credit", name='get_credit')
 
     @task
     def get_license(self):
-        self.client.get("/license")
+        self.client.get("/license", name='get_license')
 
     @task
     def get_last_comment_json(self):
         params = {
             "filter": ["F"],
         }
-        self.client.get(f"/review/json/{self.course_id}", params=params)
+        self.client.get(f"/review/json/{self.course_id}", params=params, name='get_last_comment_json')
 
     @task
     def get_comment(self):
-        self.client.get(f"/review/comment/{self.course_id}")
+        self.client.get(f"/review/comment/{self.course_id}", name='get_comment')
 
     @task
     def get_professor_review(self):
-        self.client.get(f"/review/result/professor/{self.professor_id}/{self.course_id}")
+        self.client.get(f"/review/result/professor/{self.professor_id}/{self.course_id}", name='get_professor_review')
 
     @task
     def get_professor_review_json(self):
-        self.client.get(f"/review/result/professor/{self.professor_id}/json/{self.course_id}/1/")
+        self.client.get(f"/review/result/professor/{self.professor_id}/json/{self.course_id}/1/", name='get_professor_review_json')
 
     @task
     def get_course_review(self):
-        self.client.get(f"/review/result/course/{self.course_id}/{self.professor_id}/")
+        self.client.get(f"/review/result/course/{self.course_id}/{self.professor_id}/", name='get_course_review')
 
     @task
     def get_course_review_json(self):
-        self.client.get(f"/review/result/course/{self.course_id}/{self.professor_id}/1/")
+        self.client.get(f"/review/result/course/{self.course_id}/{self.professor_id}/1/", name='get_course_review_json')
 
     @task
     def get_result(self):
@@ -333,7 +333,7 @@ class OTL_Locust(HttpUser):
             # "type": "",
             # "grade": "",
         }
-        self.client.get("/review/result/", params=params)
+        self.client.get("/review/result/", params=params, name='get_result')
 
     @task
     def get_result_json(self):
@@ -349,4 +349,4 @@ class OTL_Locust(HttpUser):
             # "type": "",
             # "grade": "",
         }
-        self.client.get("/review/result.json/1/", params=params)
+        self.client.get("/review/result.json/1/", params=params, name='get_result_json')

@@ -5,13 +5,14 @@ from itertools import combinations, groupby
 
 
 class API(object):
-    def __init__(self, idx, method, uri):
+    def __init__(self, idx, method, uri, func_name):
         self.idx = idx
         self.method = method
         self.uri = uri
+        self.func_name = func_name
 
     def __str__(self):
-        return f"Idx: {self.idx}, Method: {self.method}, URI: {self.uri}"
+        return f"Idx: {self.idx}, Method: {self.method}, URI: {self.uri}, func_name: {self.func_name}"
 
     def __eq__(self, rhs):
         return self.method == rhs.method and self.uri == rhs.uri
@@ -22,10 +23,10 @@ class APIManager(object):
     idx_map = {}
     count = 0
 
-    def register(self, method, uri):
+    def register(self, method, uri, func_name):
         if (method, uri) in self.api_map: return
         self.count += 1
-        api = API(self.count, method, uri)
+        api = API(self.count, method, uri, func_name)
         self.idx_map[self.count] = api
         self.api_map[(method, uri)] = api
 
@@ -41,36 +42,36 @@ class APIManager(object):
         return API(None, method, uri)
 
 APIS = [
-    ('GET', '^/main/$'),
-    ('GET', '^/session/$'),
-    ('GET', '^/session/login/$'),
-    ('GET', '^/session/login/callback/$'),
-    ('GET', '^/session/logout/$'),
-    ('GET', '^/session/unregister/$'),
-    ('GET', '^/session/language/$'),
-    ('GET', '^/session/settings/$'),
-    ('POST', '^/session/settings/$'),
-    ('GET', '^/api/subject/semesters/$'),
-    ('GET', '^/api/subject/courses/$'),
-    ('GET', '^/api/subject/courses/([0-9])/$'),
-    ('GET', '^/api/subject/courses/autocomplete/$'),
-    ('GET', '^/api/subject/courses/([0-9])/lectures/$'),
-    ('GET', '^/api/subject/lectures/$'),
+    ('GET', '^/main/$', None),
+    ('GET', '^/session/$', 'session'),
+    ('GET', '^/session/login/$', 'session_login'),
+    ('GET', '^/session/login/callback/$', 'session_login_callback'),
+    ('GET', '^/session/logout/$', 'session_logout'),
+    ('GET', '^/session/unregister/$', None),
+    ('GET', '^/session/language/$', 'session_language'),
+    ('GET', '^/session/settings/$', 'session_setting_get'),
+    ('POST', '^/session/settings/$', 'session_setting_post'),
+    ('GET', '^/api/subject/semesters/$', None),
+    ('GET', '^/api/subject/courses/$', None),
+    ('GET', '^/api/subject/courses/([0-9])/$', None),
+    ('GET', '^/api/subject/courses/autocomplete/$', None),
+    ('GET', '^/api/subject/courses/([0-9])/lectures/$', None),
+    ('GET', '^/api/subject/lectures/$', None),
     # ('GET', '^/subject/lectures/([0-9])/$'),
-    ('GET', '^/api/lectures'),
-    ('GET', '^/api/lectures/autocomplete/$'),
-    ('GET', '^/api/users/([0-9])/taken-courses/$'),
-    ('GET', '^main'),
-    ('GET', '^credit/$'),
-    ('GET', '^license/$'),
-    ('GET', '^/review/json/([0-9])/$'),
-    ('GET', '^/review/comment/([1-9][0-9]*)/$'),
-    ('GET', '^/review/result/professor/([1-9][0-9]*)/([^/]+)/$'),
-    ('GET', '^/review/result/professor/([^/]+)/json/([^/]+)/([^/]+)/$'),
-    ('GET', '^/review/result/course/([1-9][0-9]*)/([^/]+)/$'),
-    ('GET', '^/review/result/course/([^/]+)/([^/]+)/json/([^/]+)/$'),
-    ('GET', '^/review/result/$'),
-    ('GET', '^/review/result/json/(?P<page>[0-9]+)/$'),
+    ('GET', '^/api/lectures', 'get_lectures'),
+    ('GET', '^/api/lectures/autocomplete/$', 'get_Lectures_auto_complete'),
+    ('GET', '^/api/users/([0-9])/taken-courses/$', 'get_taken_courses'),
+    ('GET', '^main', 'get_main'),
+    ('GET', '^credit/$', 'get_credit'),
+    ('GET', '^license/$', 'get_license'),
+    ('GET', '^/review/json/([0-9])/$', 'get_last_comment_json'),
+    ('GET', '^/review/comment/([1-9][0-9]*)/$', 'get_comment'),
+    ('GET', '^/review/result/professor/([1-9][0-9]*)/([^/]+)/$', 'get_professor_review'),
+    ('GET', '^/review/result/professor/([^/]+)/json/([^/]+)/([^/]+)/$', 'get_professor_review_json'),
+    ('GET', '^/review/result/course/([1-9][0-9]*)/([^/]+)/$', 'get_course_review'),
+    ('GET', '^/review/result/course/([^/]+)/([^/]+)/json/([^/]+)/$', 'get_course_review_json'),
+    ('GET', '^/review/result/$', 'get_result'),
+    ('GET', '^/review/result/json/(?P<page>[0-9]+)/$', get_result_json),
 
     # ('GET', '^/subject/courses/([0-9])/reviews/$'),
     # ('GET', '^/subject/lectures/([0-9])/reviews/$'),
@@ -79,29 +80,29 @@ APIS = [
     # ('GET', '^/review/insert/([0-9])/$'),
     # ('GET', '^/review/like/$'),
     # ('GET', '^/review/read/$'),
-    ('GET', '^/timetable/$'),
-    ('POST', '^/timetable/api/table_update/$'),
-    ('POST', '^/timetable/api/table_create/$'),
-    ('POST', '^/timetable/api/table_delete/$'),
-    ('POST', '^/timetable/api/table_copy/$'),
-    ('POST', '^/timetable/api/table_load/$'),
-    ('POST', '^/timetable/api/autocomplete/$'),
-    ('POST', '^/timetable/api/search/$'),
-    ('POST', '^/timetable/api/comment_load/$'),
-    ('POST', '^/timetable/api/list_load_major/$'),
-    ('POST', '^/timetable/api/list_load_humanity/$'),
-    ('POST', '^/timetable/api/wishlist_load/$'),
-    ('POST', '^/timetable/api/wishlist_update/$'),
-    ('DELETE', '^/timetable/api/wishlist_update'),      # DELETE인데 사실 POST임
-    ('GET', '^/timetable/api/share_image/$'),
-    ('GET', '^/timetable/api/share_calendar/$'),
-    ('GET', '^/timetable/google_auth_return/$'),
+    ('GET', '^/timetable/$', 'get_table'),
+    ('POST', '^/timetable/api/table_update/$', 'table_update'),
+    ('POST', '^/timetable/api/table_create/$', 'table_create'),
+    ('POST', '^/timetable/api/table_delete/$', 'table_delete'),
+    ('POST', '^/timetable/api/table_copy/$', 'table_copy'),
+    ('POST', '^/timetable/api/table_load/$', 'table_load'),
+    ('POST', '^/timetable/api/autocomplete/$', 'table_autocomplete'),
+    ('POST', '^/timetable/api/search/$', 'table_search'),
+    ('POST', '^/timetable/api/comment_load/$', 'comment_load'),
+    ('POST', '^/timetable/api/list_load_major/$', 'major_load'),
+    ('POST', '^/timetable/api/list_load_humanity/$', 'humanity_load'),
+    ('POST', '^/timetable/api/wishlist_load/$', 'wishlist_load'),
+    ('POST', '^/timetable/api/wishlist_update/$', 'wishlist_update'),
+    ('DELETE', '^/timetable/api/wishlist_update', None),      # DELETE인데 사실 POST임
+    ('GET', '^/timetable/api/share_image/$', 'share_image'),
+    ('GET', '^/timetable/api/share_calendar/$', 'share_calander'),
+    ('GET', '^/timetable/google_auth_return/$', 'google_auth_return'),
 ]
 
 API_MANAGER = APIManager()
 def init():
     for api in APIS:
-        API_MANAGER.register(api[0], api[1])
+        API_MANAGER.register(api[0], api[1], api[2])
 
 
 def validate(line):
