@@ -97,7 +97,7 @@ def generate_locust_file(input_filename, output_filename, patterns):
 
 def execute_locust(file_name, host, u, r):
     print("EXEC")
-    cmd = f"locust -f {file_name} --host={host} -u {u} -r {r}"
+    cmd = f"locust -f {file_name} --host={host} -u {u} -r {r} --headless"
 
     os.system(cmd)
     print("END")
