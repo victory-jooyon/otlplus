@@ -1,6 +1,8 @@
 import ast, astor
 import os
 
+pattern1 = [ ... ]
+
 temp_patterns = [
     (("session_login", "session_login_callback", 'session_setting_get'), 3),
     (("session_login", "session_login_callback", "session_language", "session_language", "session_setting_post"), 3),
@@ -97,13 +99,13 @@ def generate_locust_file(input_filename, output_filename, patterns):
 
 def execute_locust(file_name, host, u, r):
     print("EXEC")
-    cmd = f"locust -f {file_name} --host={host} -u {u} -r {r} --headless"
+    cmd = f"locust -f {file_name} --host={host} -u {u} -r {r}"
 
     os.system(cmd)
     print("END")
 
 src_file = "locustfile.py"
-output_file = "locustfile_p.py"
+output_file = "pattern_locust.py"
 
-generate_locust_file(src_file, output_file, temp_patterns)
-execute_locust(output_file, "http://13.125.233.178:8000", 5, 5)
+generate_locust_file(src_file, output_file, pattern1)
+execute_locust(output_file, "http://13.125.233.178:8000/", 5, 5)
