@@ -78,64 +78,6 @@ class OTL_Locust(HttpUser):
 
         response = self.client.post(url, name='session_setting_post')
 
-    # subject APIs
-    @task
-    def get_semesters(self):
-        self.client.get("/api/semesters", name='get_semesters')
-
-    @task
-    def get_courses(self):
-        params = {
-            "department": "ALL",
-            "type": "ALL",
-            "grade": "ALL",
-            "term": "ALL",
-            "keyword": "cs453"
-        }
-        self.client.get("/api/courses", params=params, name='get_courses')
-
-    @task
-    def get_course(self):
-        self.client.get(f"/api/courses/{self.course_id}", name='get_course')
-
-    @task
-    def get_courses_auto_complete(self):
-        params = {"keyword": "전산"}
-        self.client.get("/api/courses/autocomplete", params=params, name='get_courses_auto_complete')
-
-    @task
-    def get_lectures_from_course(self):
-        self.client.get(f"/api/courses/{self.course_id}/lectures", name='get_lectures_from_course')
-
-    @task
-    def get_lectures(self):
-        params = {
-            "year": "2020",
-            "semester": "1",
-            "department": "CS",
-            "type": "ALL",
-            "grade": "400",
-            "day": "",
-            "begin": "",
-            "end": "",
-            "keyword": "테스팅",
-        }
-        self.client.get("/api/lectures", params=params, name='get_lectures')
-
-    @task
-    def get_Lectures_auto_complete(self):
-        params = {
-            "year": "2020",
-            "semester": "1",
-            "keyword": "cs"
-        }
-        self.client.get("/api/lectures/automcomplete", params=params, name='get_Lectures_auto_complete')
-
-    @task
-    def get_taken_courses(self):
-        user_id = "1"
-        self.client.get(f"/api/users/{user_id}/taken-courses", name='get_taken_courses')
-
     # timetable APIs
     @task
     def get_table(self):
