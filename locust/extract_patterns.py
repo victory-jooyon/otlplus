@@ -1,7 +1,7 @@
 import json
 import re
 from collections import defaultdict, Counter
-from itertools import combinations
+from itertools import combinations, groupby
 
 
 class API(object):
@@ -202,14 +202,15 @@ def extract_pattern4(user_logs):
     candidates = []
     apis = []
     for user, api_logs in user_logs.items():
-        apis.append([(a.method, a.uri) for a, _ in api_logs])
+        # 연속한 같은 api는 하나로 처리 (e.g. AABBA -> ABA)
+        apis.append([x[0] for x in groupby([(a.method, a.uri) for a, _ in api_logs])])
 
     combis = list(combinations(apis, 2))
     for a, b in combis:
         la = len(a)
         lb = len(b)
 
-        d = [[0 for _ in range(int(lb+1))] for _ in range(int(la+1))]
+        d = [[0 for _ in range(lb+1)] for _ in range(la+1)]
         for i in range(0, la):
             for j in range(0, lb):
                 d[i][j] = max(d[i-1][j], d[i][j-1], d[i-1][j-1]+1) if a[i] == b[j] else max(d[i][j-1], d[i-1][j])
