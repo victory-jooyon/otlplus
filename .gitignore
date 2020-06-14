@@ -100,3 +100,6 @@ db_update_script.log
 .ftpconfig
 
 react/node_modules
+
+.ropeproject/
+.vscode/
