@@ -11,7 +11,10 @@ class OTL_Locust(HttpUser):
     course_id = "1973"  # CS453
     professor_id = "2007"
 
+    csrf_token = None
+
     def on_start(self):
+        self.get_main()
         self.session_login_callback()
 
     # session APIs
@@ -74,9 +77,17 @@ class OTL_Locust(HttpUser):
     def session_setting_post(self):
         url = "/session/settings/"
 
-        data = {"fav_department": ["EE", "CS", "MSB"]}
+        data = {
+            'language': "ko",
+            'fav_department': [132, 331, 4423]
+        }
 
-        response = self.client.post(url, name='session_setting_post')
+        response = self.client.post(url,
+            data=data,
+            headers={"X-CSRFToken": self.csrf_token},
+            cookies={"csrftoken": self.csrf_token},
+            name='session_setting_post'
+        )
 
     # timetable APIs
     @task
@@ -227,7 +238,9 @@ class OTL_Locust(HttpUser):
     # review APIs
     @task
     def get_main(self):
-        self.client.get("/main", name='get_main')
+        response= self.client.get("/main", name='get_main')
+        self.csrf_token = response.cookies['csrftoken']
+        # print("TOKEN : ", self.csrf_token)
 
     @task
     def get_review(self):
