@@ -52,7 +52,7 @@ def create_file_with_content(file_name, content):
 
 def generate_locust_file(input_filename, output_filename, patterns):
     ast_tree = astor.code_to_ast.parse_file(input_filename)
-    print(astor.dump_tree(ast_tree))
+    # print(astor.dump_tree(ast_tree))
 
     # assume only one class def
     class_def = None

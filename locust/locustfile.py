@@ -11,6 +11,9 @@ class OTL_Locust(HttpUser):
     course_id = "1973"  # CS453
     professor_id = "2007"
 
+    def on_start(self):
+        self.session_login_callback()
+
     # session APIs
     @task
     def session(self):
@@ -63,13 +66,13 @@ class OTL_Locust(HttpUser):
 
     @task
     def session_setting_get(self):
-        url = "/session/setting"
+        url = "/session/settings"
 
         response = self.client.get(url, name='session_setting_get')
 
     @task
     def session_setting_post(self):
-        url = "/session/setting"
+        url = "/session/settings/"
 
         data = {"fav_department": ["EE", "CS", "MSB"]}
 
