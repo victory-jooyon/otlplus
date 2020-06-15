@@ -125,7 +125,7 @@ def extract_pattern1(user_logs, min_length = 10, max_length = 20):
         for length in range(min_length, max_length + 1):
             p = []
             for api, _ in logs:
-#                p.append(api.idx)
+                # p.append(api.idx)
                 p.append(api.func_name)
                 if len(p) == length:
                     candidates.append(tuple(p))
@@ -159,7 +159,7 @@ def getLCS(log1, log2):
     lcs = []
     while i > 0 and j > 0:
         if P[i][j] == 1:
-#            lcs = [log1[i - 1].idx] + lcs
+            # lcs = [log1[i - 1].idx] + lcs
             lcs = [log1[i - 1].func_name] + lcs
             i -= 1
             j -= 1
@@ -231,6 +231,40 @@ def extract_pattern4(user_logs):
     return sorted(dict(Counter(candidates)).items(), key=lambda item: (item[1], len(item[0])), reverse=True)
 
 
+def get_pattern_by_log_and_rule(log_file_name, rule):
+    init()
+
+    f = open(log_file_name, 'r')
+    raw_logs = f.readlines()
+    logs = []
+    for log in raw_logs:
+        if not validate(log): continue
+        logs.append(json.loads(log))
+    f.close()
+
+    user_logs = defaultdict(list)
+    for log in logs:
+        if 'csrftoken' not in log['cookie']: continue
+        key = log['cookie']['csrftoken']
+        api = API_MANAGER.find_by_uri(log['method'], log['URI'])
+        if api: user_logs[key].append((api, log))
+    
+    extract_func = None
+    if (rule == 0):
+        extract_func = extract_pattern1
+    elif (rule == 1):
+        extract_func = extract_pattern2
+    elif (rule == 2):
+        extract_func = extract_pattern3
+    elif (rule == 3):
+        extract_func = extract_pattern4
+    else:
+        print("Invalid rule")
+        exit(-1)
+
+    return extract_func(user_logs)
+
+
 if __name__ == '__main__':
     init()
 
@@ -251,4 +285,3 @@ if __name__ == '__main__':
 
     print(extract_pattern4(user_logs))
     # extract_pattern2(user_logs)
-

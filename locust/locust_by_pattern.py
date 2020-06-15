@@ -1,13 +1,7 @@
 import ast, astor
 import os
 
-pattern1 = [ ... ]
-
-temp_patterns = [
-    (("session_login", "session_login_callback", 'session_setting_get'), 3),
-    (("session_login", "session_login_callback", "session_language", "session_language", "session_setting_post"), 3),
-    (("session_login_callback", "session_setting_get", "session_setting_post"), 5)
-]
+from extract_patterns import get_pattern_by_log_and_rule
 
 def is_HttpUser_Inherit_class(x):
     if (isinstance(x, ast.ClassDef)):
@@ -98,14 +92,19 @@ def generate_locust_file(input_filename, output_filename, patterns):
     create_file_with_content(output_filename, astor.to_source(ast_tree))
 
 def execute_locust(file_name, host, u, r):
-    print("EXEC")
     cmd = f"locust -f {file_name} --host={host} -u {u} -r {r}"
+    print(f"EXEC locust with cmd ${cmd}")
 
     os.system(cmd)
-    print("END")
 
-src_file = "locustfile.py"
-output_file = "pattern_locust.py"
+if __name__ == '__main__':
+    log_file = './otlplus.log'
+    locust_src_file = 'locustfile.py'
+    rule_list = [0, 1, 2, 3]
 
-generate_locust_file(src_file, output_file, pattern1)
-execute_locust(output_file, "http://13.125.233.178:8000/", 5, 5)
+    for rule in rule_list:
+        patterns = get_pattern_by_log_and_rule(log_file, rule)
+
+        locust_output_file = f"locust_file_pattern{rule}.py"
+
+        generate_locust_file(locust_src_file, locust_output_file, patterns)
