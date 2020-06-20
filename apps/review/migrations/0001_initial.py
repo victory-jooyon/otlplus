@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             name='Comment',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('comment', models.CharField(max_length=65536)),
+                ('comment', models.CharField(max_length=20000)),
                 ('grade', models.SmallIntegerField(default=0)),
                 ('load', models.SmallIntegerField(default=0)),
                 ('speech', models.SmallIntegerField(default=0)),

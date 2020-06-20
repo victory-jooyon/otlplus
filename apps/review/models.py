@@ -8,7 +8,7 @@ class Comment(models.Model):
     course = models.ForeignKey(Course, db_index=True)
     lecture = models.ForeignKey(Lecture, db_index=True)
 
-    comment = models.CharField(max_length=65536)
+    comment = models.CharField(max_length=20000)
     grade = models.SmallIntegerField(default=0)
     load = models.SmallIntegerField(default=0)
     speech = models.SmallIntegerField(default=0)

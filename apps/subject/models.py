@@ -35,7 +35,7 @@ class Lecture(models.Model):
     common_title = models.CharField(max_length=100, null=True)
     common_title_en = models.CharField(max_length=100, null=True)
     class_title = models.CharField(max_length=100, null=True)
-    class_title_en = models.CharField(max_length=100, null=True)
+    class_title_en = models.CharField(max_length=500, null=True)
 
     # Updated by view when comments are added/deleted/modified
     grade_sum = models.IntegerField(default=0)
@@ -54,13 +54,16 @@ class Lecture(models.Model):
         self.grade_sum = 0
         self.load_sum = 0
         self.speech_sum = 0
-        for c in Comment.objects.filter(lecture__course=self.course,
+        try:
+            for c in Comment.objects.filter(lecture__course=self.course,
                                         lecture__professor__in=self.professor.all()):
-            if c.grade > 0:
-                self.comment_num += (c.like+1)
-                self.grade_sum += (c.like+1)*c.grade*3
-                self.load_sum += (c.like+1)*c.load*3
-                self.speech_sum += (c.like+1)*c.speech*3
+                if c.grade > 0:
+                    self.comment_num += (c.like+1)
+                    self.grade_sum += (c.like+1)*c.grade*3
+                    self.load_sum += (c.like+1)*c.load*3
+                    self.speech_sum += (c.like+1)*c.speech*3
+        except:
+            pass
         self.avg_update()
         self.save()
 
@@ -98,7 +101,9 @@ class Lecture(models.Model):
 
         # Add common and class title for lectures like 'XXX<AAA>', 'XXX<BBB>'
         def _add_title_format(lectures):
-            if len (lectures) == 1:
+            if not lectures:
+                return
+            elif len (lectures) == 1:
               title = lectures[0].title
               if title[-1] == '>':
                 common_title = title[:title.find('<')]
@@ -119,7 +124,9 @@ class Lecture(models.Model):
 
         # Add common and class title for lectures like 'XXX<AAA>', 'XXX<BBB>'
         def _add_title_format_en(lectures):
-            if len (lectures) == 1:
+            if not lectures:
+                return
+            elif len (lectures) == 1:
               title = lectures[0].title_en
               if title[-1] == '>':
                 common_title = title[:title.find('<')]
@@ -138,8 +145,15 @@ class Lecture(models.Model):
                 l.class_title_en = u'A'
               l.save(update_fields=["common_title_en", "class_title_en"])
 
-        lectures = Lecture.objects.filter(course=self.course, deleted=False,
-                                          year=self.year, semester=self.semester)
+        # lectures = Lecture.objects.filter(course=self.course, deleted=False,
+        #                                   year=self.year, semester=self.semester)
+
+        try:
+            lectures = Lecture.objects.filter(course=self.course, deleted=False,
+                                              year=self.year, semester=self.semester)
+        except:
+            lectures = None
+
         _add_title_format(lectures)
         _add_title_format_en(lectures)
 
