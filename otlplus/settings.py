@@ -21,8 +21,12 @@ LOG_FILE = os.path.join(BASE_DIR, 'request_middleware.log')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-with open(os.path.join(BASE_DIR, 'keys/django_secret')) as f:
-    SECRET_KEY = f.read().strip()
+# with open(os.path.join(BASE_DIR, 'keys/django_secret')) as f:
+#     SECRET_KEY = f.read().strip()
+SECRET_KEY = os.environ.get("SECRET_KEY")
+SSO_CLIENT_ID = os.environ.get("SSO_CLIENT_ID")
+SSO_SECRET_KEY = os.environ.get("SSO_SECRET_KEY")
+SSO_IS_BETA = False
 
 with open(os.path.join(BASE_DIR, 'keys/sso_secret')) as f:
     SSO_KEY = f.read().strip()
