@@ -178,3 +178,8 @@ try:
     from settings_local import *
 except ImportError:
     pass
+
+try:
+    from settings_rdbms import *
+except ImportError:
+    pass
